@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gallery · Ricardo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--blue:#004D98;--red:#A50044;--gold:#EDBB00;--dark:#06080f;--dark2:#0c1020;--card:#10162a;--text:#dde2f0;--muted:#6b7694;--border:rgba(255,255,255,.06)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px}
+
+    /* NAV */
+    .nav{position:fixed;top:0;width:100%;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 3rem;background:rgba(6,8,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+    .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:3px;background:linear-gradient(135deg,var(--blue),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .nav-links{list-style:none;display:flex;gap:2.5rem}
+    .nav-links a{font-size:.78rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);font-weight:500;position:relative;transition:color .25s}
+    .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s}
+    .nav-links a:hover,.nav-links a.active{color:var(--text)}
+    .nav-links a:hover::after,.nav-links a.active::after{width:100%}
+
+    /* PAGE HERO */
+    .page-hero{
+      padding:10rem 3rem 5rem;position:relative;overflow:hidden;
+      border-bottom:1px solid var(--border);
+    }
+    .page-hero::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 80% 50%,rgba(0,77,152,.12) 0%,transparent 60%);
+    }
+    .page-hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+    .ph-label{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;font-weight:500}
+    .ph-label::before{content:'';display:block;width:24px;height:1px;background:var(--gold)}
+    .ph-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,9vw,10rem);line-height:.9;color:#fff;letter-spacing:-1px}
+    .ph-title span{color:var(--gold)}
+    .ph-sub{color:var(--muted);font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;margin-top:1rem}
+
+    /* COUNT ROW */
+    .count-row{display:flex;gap:3rem;margin-top:2.5rem;flex-wrap:wrap}
+    .count-item{}
+    .count-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--gold);line-height:1;display:block}
+    .count-lbl{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+
+    /* GALLERY MAIN */
+    .gallery-main{padding:5rem 3rem;max-width:1100px;margin:0 auto}
+
+    /* Category header */
+    .cat-head{
+      display:flex;align-items:center;gap:1.5rem;
+      margin-bottom:2rem;padding-bottom:1.2rem;
+      border-bottom:1px solid var(--border);
+    }
+    .cat-bar{width:4px;height:2.5rem;border-radius:2px;background:linear-gradient(to bottom,var(--blue),var(--red));flex-shrink:0}
+    .cat-name{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#fff;letter-spacing:2px}
+    .cat-cnt{margin-left:auto;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);background:var(--card);border:1px solid var(--border);padding:.3rem .9rem;border-radius:2px}
+
+    /* MASONRY-STYLE GRID */
+    .gallery-grid{display:grid;gap:3px;margin-bottom:5rem}
+    .g3{grid-template-columns:repeat(3,1fr)}
+    .g2{grid-template-columns:repeat(2,1fr)}
+    .g4{grid-template-columns:repeat(4,1fr)}
+
+    .g-item{
+      background:var(--card);border:1px solid var(--border);
+      overflow:hidden;position:relative;aspect-ratio:4/3;
+      display:flex;flex-direction:column;
+      transition:border-color .3s;
+    }
+    .g-item.tall{aspect-ratio:3/4}
+    .g-item.wide{aspect-ratio:16/7}
+    .g-item:hover{border-color:rgba(237,187,0,.3)}
+    .g-item:hover .g-overlay{opacity:1}
+    .g-item:hover .g-caption{transform:translateY(0)}
+
+    .g-ph{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      background:var(--dark2);position:relative;overflow:hidden;
+    }
+    .g-ph::before{
+      content:'';position:absolute;inset:0;
+      background:repeating-linear-gradient(-45deg,transparent,transparent 12px,rgba(255,255,255,.015) 12px,rgba(255,255,255,.015) 13px);
+    }
+    .g-ph .g-icon{font-size:2.5rem;opacity:.2;position:relative;z-index:1}
+    .g-ph .g-tip{font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);opacity:.5;margin-top:.5rem;position:relative;z-index:1}
+
+    /* Real image */
+    .g-item img{width:100%;height:100%;object-fit:cover;display:block}
+
+    .g-overlay{
+      position:absolute;inset:0;
+      background:linear-gradient(to top,rgba(6,8,15,.9) 0%,transparent 50%);
+      opacity:0;transition:opacity .3s;
+    }
+    .g-caption{
+      position:absolute;bottom:0;left:0;right:0;padding:1.2rem 1.5rem;
+      transform:translateY(8px);transition:transform .3s;z-index:1;
+    }
+    .g-caption strong{display:block;font-size:.9rem;color:#fff;margin-bottom:.2rem}
+    .g-caption span{font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)}
+
+    /* NOTE */
+    .note{
+      background:rgba(0,77,152,.08);border:1px solid rgba(0,77,152,.2);
+      border-left:3px solid var(--blue);border-radius:2px;
+      padding:1rem 1.5rem;margin-bottom:3rem;
+      font-size:.82rem;color:var(--muted);line-height:1.7;
+    }
+    .note code{background:rgba(255,255,255,.08);padding:.1rem .4rem;border-radius:3px;font-size:.8rem;color:var(--text)}
+
+    /* FOOTER */
+    footer{background:#040609;padding:4rem 3rem 3rem;border-top:1px solid var(--border)}
+    .footer-inner{max-width:1100px;margin:0 auto}
+    .footer-top{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:3rem;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:2rem}
+    .footer-logo{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:3px;background:linear-gradient(135deg,var(--blue),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem}
+    .footer-tagline{font-family:'Playfair Display',serif;font-style:italic;color:var(--muted);font-size:.95rem}
+    .footer-nav-group h4{font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+    .footer-nav-links{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+    .footer-nav-links a{font-size:.9rem;color:var(--muted);transition:color .2s}
+    .footer-nav-links a:hover{color:var(--gold)}
+    .footer-bottom{padding-top:1.5rem;display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);flex-wrap:wrap;gap:.5rem}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">FCR</div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="gallery.html" class="active">Gallery</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <p class="ph-label">Koleksi Foto</p>
+    <h1 class="ph-title">My<br/><span>Gallery</span></h1>
+    <p class="ph-sub">Momen-momen Blaugrana, kampus, dan kehidupan sehari-hari.</p>
+    <div class="count-row">
+      <div class="count-item"><span class="count-num">13</span><span class="count-lbl">Total Foto</span></div>
+      <div class="count-item"><span class="count-num">3</span><span class="count-lbl">Kategori</span></div>
+      <div class="count-item"><span class="count-num">∞</span><span class="count-lbl">Kenangan</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="gallery-main">
+
+  <div class="note">
+    <strong style="color:var(--text)">📸 Cara tambah foto:</strong>
+    Ganti <code>&lt;div class="g-ph"&gt;...&lt;/div&gt;</code> dengan <code>&lt;img src="foto.jpg" alt="deskripsi"&gt;</code>
+    dan simpan file foto di folder yang sama.
+  </div>
+
+  <!-- CAT 1: BARCA -->
+  <div class="cat-head">
+    <div class="cat-bar"></div>
+    <div class="cat-name">FC Barcelona</div>
+    <div class="cat-cnt">6 foto</div>
+  </div>
+  <div class="gallery-grid g3">
+
+    <div class="g-item tall">
+      <div class="g-ph"><span class="g-icon">🏟️</span><span class="g-tip">Foto Stadion</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Spotify Camp Nou</strong><span>Markas Blaugrana</span></div>
+    </div>
+
+    <div class="g-item">
+      <div class="g-ph"><span class="g-icon">👕</span><span class="g-tip">Jersey Koleksi</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Home Kit 2024/25</strong><span>Koleksi Jersey</span></div>
+    </div>
+
+    <div class="g-item">
+      <div class="g-ph"><span class="g-icon">🏆</span><span class="g-tip">Foto Trofi</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>La Liga Champions</strong><span>Musim 2024/25</span></div>
+    </div>
+
+    <div class="g-item">
+      <div class="g-ph"><span class="g-icon">⚽</span><span class="g-tip">Foto Nobar</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Nobar El Clásico</strong><span>Bareng Culer Manado</span></div>
+    </div>
+
+    <div class="g-item">
+      <div class="g-ph"><span class="g-icon">🎨</span><span class="g-tip">Wallpaper Barca</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Blaugrana Art</strong><span>Digital Collection</span></div>
+    </div>
+
+    <div class="g-item">
+      <div class="g-ph"><span class="g-icon">🎉</span><span class="g-tip">Foto Selebrasi</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Goal Celebration</strong><span>Momen Tak Terlupakan</span></div>
+    </div>
+
+  </div>
+
+  <!-- CAT 2: KAMPUS -->
+  <div class="cat-head">
+    <div class="cat-bar" style="background:linear-gradient(to bottom,#22c55e,#15803d)"></div>
+    <div class="cat-name">Aktivitas Kampus</div>
+    <div class="cat-cnt">4 foto</div>
+  </div>
+  <div class="gallery-grid g2">
+
+    <div class="g-item wide">
+      <div class="g-ph"><span class="g-icon">💻</span><span class="g-tip">Foto Coding</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Coding Session</strong><span>Project Web Dev</span></div>
+    </div>
+
+    <div class="g-item wide">
+      <div class="g-ph"><span class="g-icon">🎓</span><span class="g-tip">Foto Kampus</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Kegiatan Perkuliahan</strong><span>Semester 2025/2026</span></div>
+    </div>
+
+    <div class="g-item">
+      <div class="g-ph"><span class="g-icon">👥</span><span class="g-tip">Foto Teman</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Tim Terbaik</strong><span>Teman Kuliah</span></div>
+    </div>
+
+    <div class="g-item">
+      <div class="g-ph"><span class="g-icon">🏫</span><span class="g-tip">Foto Gedung</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Sudut Favorit</strong><span>Area Kampus</span></div>
+    </div>
+
+  </div>
+
+  <!-- CAT 3: PERSONAL -->
+  <div class="cat-head">
+    <div class="cat-bar" style="background:linear-gradient(to bottom,var(--gold),#d4930d)"></div>
+    <div class="cat-name">Personal</div>
+    <div class="cat-cnt">3 foto</div>
+  </div>
+  <div class="gallery-grid g4" style="margin-bottom:0">
+
+    <div class="g-item tall">
+      <div class="g-ph"><span class="g-icon">🧑</span><span class="g-tip">Foto Profil</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Ricardo</strong><span>2026</span></div>
+    </div>
+
+    <div class="g-item tall">
+      <div class="g-ph"><span class="g-icon">🌍</span><span class="g-tip">Foto Traveling</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Jalan-Jalan</strong><span>Eksplorasi</span></div>
+    </div>
+
+    <div class="g-item tall">
+      <div class="g-ph"><span class="g-icon">🍕</span><span class="g-tip">Foto Kuliner</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Kuliner</strong><span>Food Hunter</span></div>
+    </div>
+
+    <div class="g-item tall">
+      <div class="g-ph"><span class="g-icon">📱</span><span class="g-tip">Foto Aktivitas</span></div>
+      <div class="g-overlay"></div>
+      <div class="g-caption"><strong>Daily Life</strong><span>Manado, 2026</span></div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div><div class="footer-logo">FCR</div><p class="footer-tagline">Més que un developer.</p></div>
+      <div class="footer-nav-group"><h4>Navigasi</h4><ul class="footer-nav-links"><li><a href="index.html">Home</a></li><li><a href="gallery.html">Gallery</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Ricardo · Personal Homepage</span><span>Built with ❤️ &amp; Blaugrana spirit</span></div>
+  </div>
+</footer>
+
+</body>
+</html>
