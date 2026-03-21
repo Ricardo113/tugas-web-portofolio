@@ -148,9 +148,32 @@
     .footer-nav-links a{font-size:.9rem;color:var(--muted);transition:color .2s}
     .footer-nav-links a:hover{color:var(--gold)}
     .footer-bottom{padding-top:1.5rem;display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);flex-wrap:wrap;gap:.5rem}
+  
+    /* ── BARCA LOGO WATERMARK ── */
+    .barca-watermark {
+      position: fixed;
+      right: -80px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 520px;
+      height: 520px;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.055;
+      filter: saturate(0) brightness(2);
+      user-select: none;
+    }
+    .barca-watermark img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
   </style>
 </head>
 <body>
+<div class="barca-watermark"><img src="pngwing_com.png" alt="FC Barcelona"/></div>
+
 
 <nav class="nav">
   <div class="nav-logo">FCR</div>
